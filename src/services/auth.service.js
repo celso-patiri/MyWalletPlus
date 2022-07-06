@@ -1,21 +1,21 @@
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import UsersRepository from "../repositories/users.repository.js";
+import jwt from "jsonwebtoken";
 import {
-  UnprocessableEntityError,
-  UnauthorizedError,
-  NotFoundError,
+  NotFoundException,
+  UnauthorizedException,
+  UnprocessableEntityException,
 } from "../global/exceptions/app.exceptions.js";
+import UsersRepository from "../repositories/users.repository.js";
 
 const validateSignUpBody = (name, email, password) => {
   if (!name || !email || !password) {
-    throw UnprocessableEntityError("Invalid signup body");
+    throw new UnprocessableEntityException("Invalid signup body");
   }
 };
 
 const validateSignInBody = (email, password) => {
   if (!email || !password) {
-    throw UnprocessableEntityError("Invalid signin body");
+    throw new UnprocessableEntityException("Invalid signin body");
   }
 };
 
@@ -23,7 +23,7 @@ const signUserUp = async (name, email, password) => {
   const existingUsers = await UsersRepository.findUser(email);
 
   if (existingUsers.rowCount > 0) {
-    throw NotFoundError("User not found");
+    throw new NotFoundException("User not found");
   }
 
   const hashedPassword = bcrypt.hashSync(password, 12);
@@ -35,7 +35,7 @@ const signUserIn = async (email, password) => {
   const [user] = rows;
 
   if (!user || !bcrypt.compareSync(password, user.password)) {
-    throw UnauthorizedError("Invalid credentials");
+    throw new UnauthorizedException("Invalid credentials");
   }
 
   return jwt.sign({ id: user.id }, process.env.JWT_SECRET);

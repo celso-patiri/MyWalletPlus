@@ -8,8 +8,26 @@ class Exception {
   }
 }
 
-export const UnprocessableEntityError = (message) =>
-  new Exception(422, message);
-export const ConflictError = (message) => new Exception(409, message);
-export const UnauthorizedError = (message) => new Exception(401, message);
-export const NotFoundError = (message) => new Exception(404, message);
+export class UnprocessableEntityException extends Exception {
+  constructor(message) {
+    super(422, message);
+  }
+}
+
+export class ConflictException extends Exception {
+  constructor(message) {
+    super(409, message);
+  }
+}
+
+export class UnauthorizedException extends Exception {
+  constructor(message) {
+    super(401, message);
+  }
+}
+
+export class NotFoundException extends Exception {
+  constructor(message) {
+    super(404, message);
+  }
+}
